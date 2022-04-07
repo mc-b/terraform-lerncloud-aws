@@ -1,6 +1,6 @@
 # LernCloud Terraform AWS Modul
 
-Dieses Repository ist Bestandteil vom [LernCloud]() Projekt.
+Dieses Repository ist Bestandteil vom [LernCloud](https://github.com/mc-b/lerncloud) Projekt.
 
 - - -
 
