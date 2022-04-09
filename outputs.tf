@@ -8,7 +8,7 @@ output "ip_vm" {
   
 }
 
-output "ip_fqdn" {
+output "fqdn_vm" {
   value = aws_instance.vm.public_dns
   description = "The FQDN of the AWS server instance."
   
