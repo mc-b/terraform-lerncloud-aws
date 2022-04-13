@@ -15,13 +15,21 @@ resource "aws_security_group" "security" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # HTTP access vom Subnetz
+  # HTTP access from anywhere
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  
+  # All other from myip
+  ingress {
+    from_port   = 22
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["${chomp(data.http.myip.body)}/32"]
+  }  
 
   # outbound internet access
   egress {
