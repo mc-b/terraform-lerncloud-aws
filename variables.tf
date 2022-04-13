@@ -35,6 +35,17 @@ variable "instance_type" {
   }
 }
 
+# wird nicht ausgewertet - nur zu Kompatibilitaet zu Mulitpass
+variable "disk" {
+    type    = string
+    default = "32GB"
+}
+
+# wird nicht ausgewertet - nur zu Kompatibilitaet zu Mulitpass
+variable "cpu" {
+    default = 1
+}
+
 # Scripts
 
 data "template_file" "userdata" {
