@@ -23,13 +23,21 @@ resource "aws_security_group" "security" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   
-  # All other from myip
+  # All other from myip (tcp)
   ingress {
     from_port   = 22
     to_port     = 65535
     protocol    = "tcp"
     cidr_blocks = ["${chomp(data.http.myip.body)}/32"]
-  }  
+  } 
+  
+  # All other from myip (udp)
+  ingress {
+    from_port   = 22
+    to_port     = 65535
+    protocol    = "udp"
+    cidr_blocks = ["${chomp(data.http.myip.body)}/32"]
+  }    
 
   # outbound internet access
   egress {
