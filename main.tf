@@ -72,7 +72,7 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_instance" "vm" {
   ami                           = data.aws_ami.ubuntu.id  
-  instance_type                 = lookup( var.instance_type, var.mem )
+  instance_type                 = lookup( var.instance_type, var.memory )
   associate_public_ip_address   = true
   user_data                     = base64encode(data.template_file.userdata.rendered)
   vpc_security_group_ids        = [aws_security_group.security.id]

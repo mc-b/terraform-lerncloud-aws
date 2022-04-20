@@ -1,49 +1,76 @@
 
 # Allgemeine Variablen
 
-# Public Variablen
-
 variable "module" {
+    description = "Modulname: wird als Hostname verwendet"
     type    = string
     default = "base"
 }
 
-variable "userdata" {
-    description = "Cloud-init Script"
-    default = "/../../modules/base.yaml"
+variable "description" {
+  description = "Beschreibung VM"
+  type        = string
+  default     = "Beschreibung VM"  
+}
+
+variable "memory" {
+    description = "Memory in GB: bestimmt Instance in der Cloud"
+    type    = number
+    default = 2
+}
+
+variable "storage" {
+    description = "Groesse Disk"
+    type    = number
+    default = 32
+}
+
+variable "cores" {
+    description = "Anzahl CPUs"
+    type    = number
+    default = 1
 }
 
 variable "ports" {
+    description = "Ports welche in der Firewall geoeffnet sind"
     type    = list(number)
     default = [ 22, 80 ]
 }
 
-variable "mem" {
+variable "userdata" {
+    description = "Cloud-init Script"
     type    = string
-    default = "1GB"
+    default = "cloud-init.yaml"
 }
 
-# Umwandlung "mem" nach AWS Instance Type
+# Zugriffs Informationen
+
+variable "url" {
+    description = "Evtl. URL fuer den Zugriff auf das API des Racks Servers"
+    type    = string
+}
+
+variable "key" {
+    description = "API Key, Token etc. fuer Zugriff"
+    type    = string
+    sensitive   = true
+}
+
+variable "vpn" {
+    description = "Optional VPN welches eingerichtet werden soll"
+    type    = string
+}
+
+# Umwandlung "memory" nach AWS Instance Type
 
 variable "instance_type" {
   type = map
   default = {
-    "1GB" = "t2.micro"
-    "2GB" = "t2.small"
-    "4GB" = "t2.medium"
-    "8GB" = "t2.large"
+    1 = "t2.micro"
+    2 = "t2.small"
+    4 = "t2.medium"
+    8 = "t2.large"
   }
-}
-
-# wird nicht ausgewertet - nur zu Kompatibilitaet zu Mulitpass
-variable "disk" {
-    type    = string
-    default = "32GB"
-}
-
-# wird nicht ausgewertet - nur zu Kompatibilitaet zu Mulitpass
-variable "cpu" {
-    default = 1
 }
 
 # Scripts
