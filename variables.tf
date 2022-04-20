@@ -48,17 +48,20 @@ variable "userdata" {
 variable "url" {
     description = "Evtl. URL fuer den Zugriff auf das API des Racks Servers"
     type    = string
+    default     = "not used"      
 }
 
 variable "key" {
     description = "API Key, Token etc. fuer Zugriff"
     type    = string
     sensitive   = true
+    default     = "not used"      
 }
 
 variable "vpn" {
     description = "Optional VPN welches eingerichtet werden soll"
     type    = string
+    default     = "not used"      
 }
 
 # Umwandlung "memory" nach AWS Instance Type
