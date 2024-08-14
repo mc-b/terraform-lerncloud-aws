@@ -43,6 +43,22 @@ resource "aws_security_group" "security" {
     cidr_blocks = ["${chomp(data.http.myip.body)}/32"]
   }    
 
+  # HACK: K8s
+  ingress {
+    from_port   = 22
+    to_port     = 65535
+    protocol    = "udp"
+    cidr_blocks = ["172.0.0.0/8"]
+  }    
+
+  # HACK: K8s
+  ingress {
+    from_port   = 22
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["172.0.0.0/8"]
+  } 
+
   # outbound internet access
   egress {
     from_port   = 0
