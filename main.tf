@@ -32,7 +32,7 @@ resource "aws_security_group" "security" {
     from_port   = 22
     to_port     = 65535
     protocol    = "tcp"
-    cidr_blocks = ["${chomp(data.http.myip.body)}/32"]
+    cidr_blocks = ["${chomp(data.http.myip.response_body)}/32"]
   } 
   
   # All other from myip (udp)
@@ -40,7 +40,7 @@ resource "aws_security_group" "security" {
     from_port   = 22
     to_port     = 65535
     protocol    = "udp"
-    cidr_blocks = ["${chomp(data.http.myip.body)}/32"]
+    cidr_blocks = ["${chomp(data.http.myip.response_body)}/32"]
   }    
 
   # HACK: K8s
