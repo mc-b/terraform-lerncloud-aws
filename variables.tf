@@ -75,9 +75,3 @@ variable "instance_type" {
     8 = "t2.large"
   }
 }
-
-# Scripts
-
-data "template_file" "userdata" {
-  template = file(var.userdata)
-}
