@@ -97,7 +97,7 @@ resource "aws_instance" "vm" {
   associate_public_ip_address = true
   vpc_security_group_ids      = [aws_security_group.security.id]
   subnet_id                   = data.aws_subnets.default.ids[0]
-  user_data                   = base64encode(file("${abspath("${path.module}/../")}/${each.value.userdata}"))
+  user_data                   = each.value.userdata
 
   tags = {
     Name        = each.value.hostname
