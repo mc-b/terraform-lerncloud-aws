@@ -1,75 +1,3 @@
-###
-#   Ressourcen
-#
-
-# Externe Security Group 
-
-resource "aws_security_group" "security" {
-  name        = var.module
-
-  dynamic "ingress" {
-    for_each = var.ports 
-      content {
-            from_port   = ingress.value
-            to_port     = ingress.value
-            protocol    = "tcp"
-            cidr_blocks = ["0.0.0.0/0"]      
-      } 
-  }
-  
-  dynamic "ingress" {
-    for_each = var.ports 
-      content {
-            from_port   = ingress.value
-            to_port     = ingress.value
-            protocol    = "udp"
-            cidr_blocks = ["0.0.0.0/0"]      
-      } 
-  }  
-  
-  # All other from myip (tcp)
-  ingress {
-    from_port   = 22
-    to_port     = 65535
-    protocol    = "tcp"
-    cidr_blocks = ["${chomp(data.http.myip.response_body)}/32"]
-  } 
-  
-  # All other from myip (udp)
-  ingress {
-    from_port   = 22
-    to_port     = 65535
-    protocol    = "udp"
-    cidr_blocks = ["${chomp(data.http.myip.response_body)}/32"]
-  }    
-
-  # HACK: K8s
-  ingress {
-    from_port   = 22
-    to_port     = 65535
-    protocol    = "udp"
-    cidr_blocks = ["172.0.0.0/8"]
-  }    
-
-  # HACK: K8s
-  ingress {
-    from_port   = 22
-    to_port     = 65535
-    protocol    = "tcp"
-    cidr_blocks = ["172.0.0.0/8"]
-  } 
-
-  # outbound internet access
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-# VMs
-
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -83,22 +11,100 @@ data "aws_ami" "ubuntu" {
     values = ["hvm"]
   }
 
-  owners = ["099720109477"] # Canonical
+  owners = ["099720109477"]
 }
 
+# Hole Default VPC
+data "aws_vpc" "default" {
+  default = true
+}
+
+# Hole zugehörige Subnets
+data "aws_subnets" "default" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
+}
+
+# Security Group für alle Instanzen
+resource "aws_security_group" "security" {
+  name   = var.module
+  vpc_id = data.aws_vpc.default.id
+
+  dynamic "ingress" {
+    for_each = var.ports
+    content {
+      from_port   = ingress.value
+      to_port     = ingress.value
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+
+  dynamic "ingress" {
+    for_each = var.ports
+    content {
+      from_port   = ingress.value
+      to_port     = ingress.value
+      protocol    = "udp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["${chomp(data.http.myip.response_body)}/32"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 65535
+    protocol    = "udp"
+    cidr_blocks = ["${chomp(data.http.myip.response_body)}/32"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["172.0.0.0/8"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 65535
+    protocol    = "udp"
+    cidr_blocks = ["172.0.0.0/8"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# EC2-Instanzen in gemeinsamer VPC/Subnet
 resource "aws_instance" "vm" {
-  ami                           = data.aws_ami.ubuntu.id  
-  instance_type                 = lookup( var.instance_type, var.memory )
-  associate_public_ip_address   = true
-  user_data                     = base64encode(templatefile(var.userdata, {}))
-  vpc_security_group_ids        = [aws_security_group.security.id]
+  for_each = var.machines
+
+  ami                         = data.aws_ami.ubuntu.id
+  instance_type               = lookup(var.instance_type, coalesce(each.value.memory, var.memory))
+  associate_public_ip_address = true
+  vpc_security_group_ids      = [aws_security_group.security.id]
+  subnet_id                   = data.aws_subnets.default.ids[0]
+  user_data                   = base64encode(file("${abspath("${path.module}/../")}/${each.value.userdata}"))
 
   tags = {
-    Name = var.module
+    Name        = each.value.hostname
+    Description = coalesce(each.value.description, var.description)
   }
-  
+
   root_block_device {
-    volume_size = 32
+    volume_size = coalesce(each.value.storage, var.storage)
   }
 }
-

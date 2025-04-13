@@ -1,20 +1,31 @@
-###
-#   Outputs wie IP-Adresse und DNS Name
-#
 
 output "ip_vm" {
-  value = aws_instance.vm.public_ip
-  description = "The IP address of the AWS server instance."
-  
+  description = "IP-Adressen der VMs"
+  value = {
+    for name, vm in aws_instance.vm :
+    name => vm.public_ip
+  }
 }
 
 output "fqdn_vm" {
-  value = aws_instance.vm.public_dns
-  description = "The FQDN of the AWS server instance."
-  
+  description = "DNS-Namen der VMs"
+  value = {
+    for name, vm in aws_instance.vm :
+    name => vm.public_dns
+  }
+}
+
+output "fqdn_private" {
+  description = "Interne DNS-Namen der EC2-Instanzen"
+  value = {
+    for name, inst in aws_instance.vm :
+    name => inst.private_dns
+  }
 }
 
 output "description" {
-  value = var.description 
-  description = "Description VM"
+  value       = var.description
+  description = "Beschreibung VM (Default)"
 }
+
+
