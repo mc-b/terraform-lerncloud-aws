@@ -29,7 +29,6 @@ data "aws_subnets" "default" {
 
 # Security Group für alle Instanzen
 resource "aws_security_group" "security" {
-  name   = var.module
   vpc_id = data.aws_vpc.default.id
 
   dynamic "ingress" {

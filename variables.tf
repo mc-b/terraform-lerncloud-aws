@@ -1,8 +1,15 @@
 
-variable "module" {
-  description = "Modulname: wird als Hostname verwendet"
-  type        = string
-  default     = "base"
+variable "machines" {
+  type = map(object({
+    hostname    = string
+    description = optional(string)
+    userdata    = string
+    memory      = optional(number)
+    cores       = optional(number)
+    storage     = optional(number)
+  }))
+  description = "Definition der Maschinen als Map"
+  default     = {}
 }
 
 variable "description" {
@@ -63,22 +70,11 @@ variable "vpn" {
 variable "instance_type" {
   type = map(string)
   default = {
-    1 = "t2.micro"
-    2 = "t2.small"
-    4 = "t2.medium"
-    8 = "t2.large"
+    1  = "t2.micro"
+    2  = "t2.small"
+    4  = "t2.medium"
+    8  = "t2.large"
+    16 = "t2.xlarge"
+    32 = "t2.2xlarge"
   }
-}
-
-variable "machines" {
-  type = map(object({
-    hostname    = string
-    description = optional(string)
-    userdata    = string
-    memory      = optional(number)
-    cores       = optional(number)
-    storage     = optional(number)
-  }))
-  description = "Definition der Maschinen als Map"
-  default     = {}
 }
