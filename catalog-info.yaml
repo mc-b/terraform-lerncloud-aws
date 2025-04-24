@@ -1,0 +1,24 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: terraform-lerncloud-aws
+  namespace: mc-b
+  description: LernCloud Terraform AWS Modul
+  tags:
+  - terraform
+  - lerncloud
+  - opentofu
+  links:
+  - url: https://github.com/mc-b/terraform-lerncloud-aws
+    title: Repository
+    icon: github
+  annotations:
+    github.com/project-slug: mc-b/terraform-lerncloud-aws
+    backstage.io/source-location: url:https://github.com/mc-b/terraform-lerncloud-aws
+    # backstage.io/techdocs-ref: url:https://github.com/mc-b/terraform-lerncloud-aws
+spec:
+  type: infrastructure
+  lifecycle: production
+  owner: group:mc-b/mc-b
+  dependsOn:
+    - component:mc-b/lerncloud     
