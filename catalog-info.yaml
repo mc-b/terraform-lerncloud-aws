@@ -20,5 +20,5 @@ spec:
   type: infrastructure
   lifecycle: production
   owner: group:mc-b/mc-b
-  dependsOn:
+  subcomponentOf:
     - component:mc-b/lerncloud     
