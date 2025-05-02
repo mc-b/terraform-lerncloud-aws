@@ -73,6 +73,7 @@ variable "instance_type" {
     1  = "t2.micro"
     2  = "t2.small"
     4  = "t2.medium"
+    6  = "t2.large"    
     8  = "t2.large"
     16 = "t2.xlarge"
     32 = "t2.2xlarge"
